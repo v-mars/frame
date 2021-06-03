@@ -11,8 +11,8 @@ import (
 	"time"
 )
 
-func InitDB(DBType,DSN string) {
-	var gdb *gorm.DB
+func InitDB(DBType,DSN string, gdb *gorm.DB) {
+	//var gdb *gorm.DB
 	var err error
 	var dialector gorm.Dialector
 	if DBType=="mysql"{
@@ -64,7 +64,7 @@ func InitDB(DBType,DSN string) {
 	//gdb.DB().SetMaxIdleConns(MaxIdleConn)
 	//gdb.DB().SetMaxOpenConns(MaxOpenConn)
 	//gdb.DB().SetConnMaxLifetime(time.Duration(MaxLifetime) * time.Second)
-	DB =gdb
+	//DB =gdb
 }
 
 type DataBases struct {
