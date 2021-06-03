@@ -1,9 +1,9 @@
 package email
 
 import (
-	"air-cloud/pkg/logger"
 	"crypto/tls"
 	"fmt"
+	"github.com/v-mars/frame/pkg/logger"
 	"gopkg.in/gomail.v2"
 	"log"
 )

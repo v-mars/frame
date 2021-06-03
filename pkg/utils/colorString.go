@@ -3,87 +3,87 @@ package utils
 import (
 	"fmt"
 	_ "fmt"
-	"air-cloud/pkg/convert"
+	"github.com/v-mars/frame/pkg/convert"
 	"strings"
 	_ "strings"
 )
 
-//绿色字体，modifier里，第一个控制闪烁，第二个控制下划线
+// Green 绿色字体，modifier里，第一个控制闪烁，第二个控制下划线
 func Green(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 32, 0, modifier...)
 }
 
-//淡绿
+// LightGreen 淡绿
 func LightGreen(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 32, 1, modifier...)
 }
 
-//青色/蓝绿色
+// Cyan 青色/蓝绿色
 func Cyan(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 36, 0, modifier...)
 }
 
-//淡青色
+// LightCyan 淡青色
 func LightCyan(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 36, 1, modifier...)
 }
 
-//红字体
+// Red 红字体
 func Red(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 31, 0, modifier...)
 }
 
-//淡红色
+// LightRed 淡红色
 func LightRed(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 31, 1, modifier...)
 }
 
-//黄色字体
+// Yellow 黄色字体
 func Yellow(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 33, 0, modifier...)
 }
 
-//黑色
+// Black 黑色
 func Black(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 30, 0, modifier...)
 }
 
-//深灰色
+// DarkGray 深灰色
 func DarkGray(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 30, 1, modifier...)
 }
 
-//浅灰色
+// LightGray 浅灰色
 func LightGray(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 37, 0, modifier...)
 }
 
-//白色
+// White 白色
 func White(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 37, 1, modifier...)
 }
 
-//蓝色
+// Blue 蓝色
 func Blue(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 34, 0, modifier...)
 }
 
-//淡蓝
+// LightBlue 淡蓝
 func LightBlue(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 34, 1, modifier...)
 }
 
-//紫色
+// Purple 紫色
 func Purple(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 35, 0, modifier...)
 }
 
-//淡紫色
+// LightPurple 淡紫色
 func LightPurple(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 35, 1, modifier...)
 }
 
-//棕色
+// Brown 棕色
 func Brown(str string, modifier ...interface{}) string {
 	return cliColorRender(str, 33, 0, modifier...)
 }

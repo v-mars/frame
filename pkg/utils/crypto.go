@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"air-cloud/pkg/convert"
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/des"
 	"fmt"
+	"github.com/v-mars/frame/pkg/convert"
 )
 
 // 填充最后一个分组的函数
