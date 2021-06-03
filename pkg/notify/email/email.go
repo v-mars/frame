@@ -2,14 +2,14 @@ package email
 
 import (
 	"crypto/tls"
-	"frame/pkg/utils"
+	"github.com/v-mars/frame/pkg/utils"
 
 	"encoding/base64"
 	"fmt"
 	"net/smtp"
 	"strings"
 
-	"frame/pkg/notify"
+	"github.com/v-mars/frame/pkg/notify"
 )
 
 // SMTP is email conf

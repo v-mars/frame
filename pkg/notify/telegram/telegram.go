@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"frame/pkg/notify"
+	"github.com/v-mars/frame/pkg/notify"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 

@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
-	"frame/internal/response"
+	"github.com/v-mars/frame/internal/response"
 	"gorm.io/gorm"
 	"regexp"
 	"strings"

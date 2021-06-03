@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"frame/pkg/notify"
+	"github.com/v-mars/frame/pkg/notify"
 )
 
 // getsign generate a sign when secure level is needsign

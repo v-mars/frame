@@ -1,4 +1,4 @@
-module frame
+module github.com/v-mars/frame
 
 go 1.16
 

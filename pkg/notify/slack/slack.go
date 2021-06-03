@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"frame/pkg/notify"
+	"github.com/v-mars/frame/pkg/notify"
 )
 
 // Slack send conf

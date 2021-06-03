@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"frame/pkg/notify"
+	"github.com/v-mars/frame/pkg/notify"
 	"io/ioutil"
 	"net/http"
 	"strings"

@@ -2,7 +2,7 @@ package logger
 
 import (
 	"fmt"
-	"frame/pkg/utils"
+	"github.com/v-mars/frame/pkg/utils"
 	"log"
 	"os"
 	"path"
