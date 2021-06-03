@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
-	"github.com/v-mars/frame/internal/response"
+	response2 "github.com/v-mars/frame/response"
 	"gorm.io/gorm"
 	"regexp"
 	"strings"
@@ -178,7 +178,7 @@ type Association struct {
 	Values interface{}
 }
 
-func Query(db *gorm.DB,Model interface{},o Option, pageData *response.PageDataList) error {
+func Query(db *gorm.DB,Model interface{},o Option, pageData *response2.PageDataList) error {
 	dbObj:= DBInt(Model, o, db)
 	err:=dbObj.Count(&pageData.Total).Error
 	if err!=nil && Error(err,o.NullError){
