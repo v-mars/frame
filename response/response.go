@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
+	"github.com/v-mars/frame/pkg/logger"
 	"html/template"
 	"net/http"
 	"regexp"
@@ -19,23 +20,23 @@ type Data struct {
 
 
 type PageDataList struct {
-	List       interface{} `json:"list"`
-	PageSize   int         `json:"pageSize"`
-	PageNumber int         `json:"pageNumber"`
-	Total      int64       `json:"total"`
+	List     interface{} `json:"list"`
+	PageSize int         `json:"pageSize"`
+	Page     int         `json:"page"`
+	Total    int64       `json:"total"`
 }
 
 func InitPageData(c *gin.Context,list interface{}, all bool) PageDataList {
 	pageSize := 10
-	pageNumber := 1
+	page := 1
 	if c!=nil{
 		pageSize = GetPageLimit(c)
-		pageNumber = GetPageIndex(c)
+		page = GetPageIndex(c)
 	}
 	if all{
 		pageSize = 0
 	}
-	var pageData = PageDataList{PageNumber: pageNumber,PageSize:pageSize,List:list}
+	var pageData = PageDataList{Page: page,PageSize:pageSize,List:list}
 	return pageData
 }
 
@@ -67,8 +68,8 @@ func DeleteSuccess(c *gin.Context, v...interface{}) {
 func Error(c *gin.Context, err error, v...interface{}) {
 	ret := Data{Code: FAIL_CODE,Status:"error", Message: err.Error(), Data: v}
 	c.Set("errorMsg", err)
-	//stack:= Stack(2)
-	//logger.Error(string(stack))
+	stack:= Stack(2)
+	logger.Error(string(stack))
 	ResJSON(c, http.StatusOK, &ret)
 }
 
@@ -93,8 +94,8 @@ func ParamFailed(c *gin.Context, err error, v...interface{}) {
 	}
 	ret := Data{Code: FAIL_CODE,Status:"error", Message: errStr, Data: v}
 	c.Set("errorMsg", err)
-	//stack:= Stack(2)
-	//logger.Error(string(stack))
+	stack:= Stack(2)
+	logger.Error(string(stack))
 	ResJSON(c, http.StatusOK, &ret)
 }
 
@@ -113,8 +114,8 @@ func SqlFailed(c *gin.Context, err error, v...interface{}) {
 	}
 	ret := Data{Code: FAIL_CODE,Status:"error", Message: errStr, Data: v}
 	c.Set("errorMsg", err)
-	//stack:= Stack(2)
-	//logger.Error(string(stack))
+	stack:= Stack(2)
+	logger.Error(string(stack))
 	ResJSON(c, http.StatusOK, &ret)
 }
 
@@ -126,8 +127,8 @@ func NoPermission(c *gin.Context, v...interface{}) {
 func FailedMsg(c *gin.Context, msg error, v...interface{}) {
 	ret := Data{Code: FAIL_CODE,Status:"error", Message: msg.Error(), Data: v}
 	c.Set("errorMsg", msg.Error())
-	//stack:= Stack(2)
-	//logger.Error(string(stack))
+	stack:= Stack(2)
+	logger.Error(string(stack))
 	ResJSON(c, http.StatusOK, &ret)
 }
 
@@ -135,8 +136,8 @@ func FailedMsg(c *gin.Context, msg error, v...interface{}) {
 func FailedCode(c *gin.Context,code int, msg error, v...interface{}) {
 	ret := Data{Code: code,Status:"error", Message: msg.Error(), Data: v}
 	c.Set("errorMsg", msg.Error())
-	//stack:= Stack(2)
-	//logger.Error(string(stack))
+	stack:= Stack(2)
+	logger.Error(string(stack))
 	ResJSON(c, http.StatusOK, &ret)
 }
 

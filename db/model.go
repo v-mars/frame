@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql/driver"
 	"fmt"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -14,6 +15,17 @@ type Base struct {
 	//UpdatedAt time.Time `gorm:"column:updated_at;type:datetime;not null;" json:"updated_at" form:"updated_at"` // 更新时间
 	//CreatedBy uint64    `gorm:"column:created_by;default:0;not null;" json:"created_by" form:"created_by"`     // 创建人
 	//UpdatedBy uint64    `gorm:"column:updated_by;default:0;not null;" json:"updated_by" form:"updated_by"`     // 更新人
+}
+func (b *Base) ById(d *gorm.DB, Id interface{}) {
+	//var o = Option{}
+	//err := Get(d, b{}, o, &obj)
+	//if err != nil {
+	//	return
+	//}
+}
+
+func (b *Base) ByName(d *gorm.DB) {
+
 }
 
 
@@ -37,8 +49,20 @@ type BaseID struct {
 	ID  uint  `gorm:"column:id;primary_key;comment:'主键id'" json:"id" form:"id"`                     // 主键
 }
 
+func (b *BaseID) ById(d *gorm.DB) {
+
+}
+
+func (b *BaseID) ByName(d *gorm.DB) {
+
+}
+
 type BaseName struct {
 	Name string `gorm:"type:varchar(64);comment:'更新人'" json:"name" form:"name"`
+}
+
+func (b *BaseName) ByName(d *gorm.DB) {
+
 }
 
 type BaseDescription struct {

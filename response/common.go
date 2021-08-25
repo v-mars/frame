@@ -33,7 +33,7 @@ func ResJSON(c *gin.Context, status int, v interface{}) {
 
 // GetPageIndex 获取页码
 func GetPageIndex(c *gin.Context) int {
-	return GetQueryToInt(c, "pageNumber", 1)
+	return GetQueryToInt(c, "page", 1)
 }
 
 // GetPageLimit 获取每页记录数

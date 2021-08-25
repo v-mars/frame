@@ -185,10 +185,10 @@ func Query(db *gorm.DB,Model interface{},o Option, pageData *response2.PageDataL
 		return err
 	}
 	if pageData.PageSize != 0 && o.All == false {
-		dbObj = dbObj.Limit(pageData.PageSize).Offset((pageData.PageNumber - 1) * pageData.PageSize)
+		dbObj = dbObj.Limit(pageData.PageSize).Offset((pageData.Page - 1) * pageData.PageSize)
 	} else {
 		pageData.PageSize = int(pageData.Total)
-		pageData.PageNumber = 1
+		pageData.Page = 1
 	}
 	err= GetResult(dbObj, o, pageData.List)
 	return err
