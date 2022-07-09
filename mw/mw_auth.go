@@ -25,6 +25,7 @@ func UserAuthMiddleware(skipper ...SkipperFunc) gin.HandlerFunc {
 			return
 		} else {
 			c.Set("userInfo", userInfo)
+			c.Set("uid", userInfo["id"])
 			c.Set("nickname", userInfo["nickname"])
 			c.Set("username", userInfo["username"])
 			c.Set("email", userInfo["email"])
