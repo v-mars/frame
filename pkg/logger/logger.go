@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	Logger     = logrus.New()
+	Logger = logrus.New()
 )
 var logLevels = map[string]logrus.Level{
 	"DEBUG": logrus.DebugLevel,
@@ -21,19 +21,21 @@ var logLevels = map[string]logrus.Level{
 	"ERROR": logrus.ErrorLevel,
 }
 
-func Initial(level string) {
-	formatter := &Formatter{
-		LogFormat:       "",
-		//LogFormat:       "%time% [%lvl%] %msg%",
-		TimestampFormat: "2006-01-02 15:04:05",
-	}
-	//ginFormatter := &Formatter{
-	//	LogFormat:       "%msg%",
-	//	TimestampFormat: "2006-01-02 15:04:05",
-	//}
-	InitLog("DEBUG","std.log","./logs",formatter, Logger)
-
-}
+//func Initial() {
+//	formatter := &Formatter{
+//		LogFormat: "",
+//		//LogFormat:       "%time% [%lvl%] %msg%",
+//		TimestampFormat: "2006-01-02 15:04:05",
+//	}
+//	//ginFormatter := &Formatter{
+//	//	LogFormat:       "%msg%",
+//	//	TimestampFormat: "2006-01-02 15:04:05",
+//	//}
+//	conf := config.GetConf()
+//	InitLog("std.log", conf.Server.LogLevel, conf.Server.LogPath, formatter, Logger)
+//	//InitLog("gin.log",conf.Server.LogLevel, ginFormatter, Gin)
+//
+//}
 
 func Debug(args ...interface{}) {
 	Logger.Debug(args...)
@@ -81,7 +83,7 @@ func InitOutToFile(logPath, logFileName string) error {
 	if !utils.FileExists(logDirPath) {
 		err := os.MkdirAll(logDirPath, os.ModePerm)
 		if err != nil {
-			msg := fmt.Sprintf("K8sDeployment log dir %s error: %s\n", logDirPath, err)
+			msg := fmt.Sprintf("mkdir log dir %s error: %s\n", logDirPath, err)
 			fmt.Println(msg)
 			return err
 		}
@@ -89,7 +91,10 @@ func InitOutToFile(logPath, logFileName string) error {
 	return nil
 }
 
-func InitLog(LogLevel, logFileName,LogPath string, formatter *Formatter, loggerObj *logrus.Logger){
+func InitLog(logFileName, LogLevel, LogPath string, formatter *Formatter, loggerObj *logrus.Logger) {
+	if len(LogPath) == 0 {
+		LogPath = "./log"
+	}
 
 	level, ok := logLevels[strings.ToUpper(LogLevel)]
 	if !ok {
@@ -104,7 +109,7 @@ func InitLog(LogLevel, logFileName,LogPath string, formatter *Formatter, loggerO
 
 	// Output to file
 	logFilePath := path.Join(LogPath, logFileName)
-	if err := InitOutToFile(LogPath, logFileName); err!=nil{
+	if err := InitOutToFile(LogPath, logFileName); err != nil {
 		log.Fatal(err)
 	}
 	rotateFileHook, err := NewRotateFileHook(RotateFileConfig{
@@ -122,4 +127,3 @@ func InitLog(LogLevel, logFileName,LogPath string, formatter *Formatter, loggerO
 	}
 	loggerObj.AddHook(rotateFileHook)
 }
-

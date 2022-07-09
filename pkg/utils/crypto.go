@@ -1,12 +1,13 @@
 package utils
 
 import (
+	"github.com/v-mars/frame/pkg/convert"
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/des"
 	"fmt"
-	"github.com/v-mars/frame/pkg/convert"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // 填充最后一个分组的函数
@@ -99,7 +100,7 @@ func EncryptAES(src, private []byte) []byte {
 	//1、创建并返回一个使用AES算法的cipher.Block接口
 	block, err := aes.NewCipher(private)
 	if err != nil {
-		panic(err)
+		panic(any(err))
 	}
 	//2、数据填充
 	src = padding(src, block.BlockSize())
@@ -115,7 +116,7 @@ func DecryptAES(src, private []byte) []byte {
 	//1、创建并返回一个使用AES算法的cipher.Block接口
 	block, err := aes.NewCipher(private)
 	if err != nil {
-		panic(err)
+		panic(any(err))
 	}
 	//2、创建一个密码分组位链接模式的，底层使用AES解密的BlockMode接口
 	blockMode := cipher.NewCBCDecrypter(block, private)
@@ -125,7 +126,6 @@ func DecryptAES(src, private []byte) []byte {
 	src = unPadding(src)
 	return src
 }
-
 
 //测试DES加解密
 func desTest() {
@@ -162,8 +162,30 @@ func aesTest() {
 	fmt.Println("解密后明文：", dec, string(dec))
 }
 
-func TestAll()  {
+func TestAll() {
 	desTest()
 	tdesTest()
 	aesTest()
+}
+
+// HashAndSalt Hash & Salt 用户的密码
+func HashAndSalt(pwd []byte) string {
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.DefaultCost)
+	if err != nil {
+		panic(any(err))
+	}
+	// 保存在数据库的密码，虽然每次生成都不同，只需保存一份即可
+	// 说明：每次运行，计算的密码值都不同。因此使用GoLang golang.org/x/crypto/bcrypt 模块对密码进行处理，可以避免字典攻击。
+	return string(hash)
+}
+
+// ValidateSaltPasswords 验证密码
+// 参数 hashedPwd: Hash & Salt 用户的密码，plainPwd: 明文密码
+func ValidateSaltPasswords(hashedPwd string, plainPwd []byte) bool {
+	byteHash := []byte(hashedPwd)
+	err := bcrypt.CompareHashAndPassword(byteHash, plainPwd)
+	if err != nil {
+		return false
+	}
+	return true
 }

@@ -89,21 +89,21 @@ func (s S) DefaultUint64(defaultVal uint64) uint64 {
 }
 
 // Uint 转换为uint
-func (s S) Uint() (uint, error) {
+func (s S) Uint() (int, error) {
 	i, err := s.Uint64()
 	if err != nil {
 		return 0, err
 	}
-	return uint(i), nil
+	return int(i), nil
 }
 
 // DefaultUint 转换为uint，如果出现错误则使用默认值
-func (s S) DefaultUint(defaultVal uint) uint {
+func (s S) DefaultUint(defaultVal int) int {
 	i, err := s.Uint()
 	if err != nil {
 		return defaultVal
 	}
-	return uint(i)
+	return int(i)
 }
 
 // Float64 转换为float64
@@ -142,22 +142,21 @@ func (s S) DefaultFloat32(defaultVal float32) float32 {
 	return f
 }
 
-
 func (s S) JsonToString(v interface{}) error {
 	return json.Unmarshal(s.Bytes(), v)
 }
 
-// ToStruct 转换为Struct Json Unmarshal：将json字符串解码到相应的数据结构
-func Unmarshal(s string,v interface{}) error {
+// Unmarshal ToStruct 转换为Struct Json Unmarshal：将json字符串解码到相应的数据结构
+func Unmarshal(s string, v interface{}) error {
 	return json.Unmarshal([]byte(s), v)
 }
 
-// ToJSON 转换为JSON   Json Marshal：将数据编码成json字符串
+// Marshal ToJSON 转换为JSON   Json Marshal：将数据编码成json字符串
 func Marshal(v interface{}) (string, error) {
-	JsonByte, err :=json.Marshal(v)
+	JsonByte, err := json.Marshal(v)
 	if err != nil {
 		//fmt.Println("生成json字符串错误")
-		panic("生成json字符串错误")
+		panic(any("生成json字符串错误"))
 		//return "", errors.New("生成json字符串错误")
 	}
 	JsonStr := string(JsonByte)

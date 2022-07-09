@@ -38,7 +38,7 @@ func InitDB(DBType,DSN string, gdb *gorm.DB) {
 	)
 	var gormConfig = gorm.Config{
 		//DryRun: false,
-		Logger: newLogger,
+		Logger:      newLogger,
 		QueryFields: true,
 		NamingStrategy: schema.NamingStrategy{
 			//TablePrefix: "t_",   // 表名前缀，`User` 的表名应该是 `t_users`
@@ -46,7 +46,7 @@ func InitDB(DBType,DSN string, gdb *gorm.DB) {
 		},
 	}
 	//gormConfig.Logger.Info(context.TODO(),log.New(os.Stdout, "\r\n", 0))
-	gdb, err = gorm.Open(dialector,&gormConfig)
+	gdb, err = gorm.Open(dialector, &gormConfig)
 	if err != nil {
 		log.Fatal("SQL Connect Failed: ", err)
 	}
@@ -61,10 +61,10 @@ func InitDB(DBType,DSN string, gdb *gorm.DB) {
 	//sqlDB.SetMaxOpenConns(100)
 	// SetConnMaxLifetime 设置了连接可复用的最大时间。
 	//sqlDB.SetConnMaxLifetime(time.Hour)
-	//gdb.DB().SetMaxIdleConns(MaxIdleConn)
-	//gdb.DB().SetMaxOpenConns(MaxOpenConn)
-	//gdb.DB().SetConnMaxLifetime(time.Duration(MaxLifetime) * time.Second)
-	//DB =gdb
+	//gdb.DB().SetMaxIdleConns(config.Gorm.MaxIdleConn)
+	//gdb.DB().SetMaxOpenConns(config.Gorm.MaxOpenConn)
+	//gdb.DB().SetConnMaxLifetime(time.Duration(config.Gorm.MaxLifetime) * time.Second)
+	DB = gdb
 }
 
 type DataBases struct {
@@ -83,3 +83,5 @@ func (a DataBases) DSN() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?%s",
 		a.User, a.Password, a.Host, a.Port, a.Name, a.Parameters)
 }
+
+type IdList []int

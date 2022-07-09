@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/bndr/gojenkins"
@@ -9,24 +10,24 @@ import (
 
 type Jenkins struct {
 	Server   *gojenkins.Jenkins
-	Username string `json:"username"`  // admin
-	Token    string `json:"token"`     // 11dc2e1df59b44ac920d420e40c08e3e56
-	Host     string `json:"host"`      // "http://localhost:8080/"
+	Username string `json:"username"` // admin
+	Token    string `json:"token"`    // 11dc2e1df59b44ac920d420e40c08e3e56
+	Host     string `json:"host"`     // "http://localhost:8080/"
 }
 
-func NewJenkins(username, token, host string) (Jenkins,error) {
-	var j = Jenkins{Username: username,Token: token,Host: host}
+func NewJenkins(username, token, host string) (Jenkins, error) {
+	var j = Jenkins{Username: username, Token: token, Host: host}
 	err := j.GetJenkins()
-	if err!=nil{
+	if err != nil {
 		return j, err
 	}
 	return j, nil
 }
 
-func (j *Jenkins)Build(jenkins *gojenkins.Jenkins, jobName string, options map[string]string) error {
-	queueId, err := jenkins.BuildJob(jobName, options)
+func (j *Jenkins) Build(jenkins *gojenkins.Jenkins, jobName string, options map[string]string) error {
+	queueId, err := jenkins.BuildJob(context.TODO(), jobName, options)
 	fmt.Println("queueId:", queueId)
-	if err!=nil {
+	if err != nil {
 		fmt.Println("BuildJob:", err)
 		return err
 	}
@@ -34,16 +35,18 @@ func (j *Jenkins)Build(jenkins *gojenkins.Jenkins, jobName string, options map[s
 	var flag bool
 	for !flag {
 		time.Sleep(2 * time.Second)
-		task, err = jenkins.GetQueueItem(queueId)
-		if err!=nil {
+		task, err = jenkins.GetQueueItem(context.TODO(), queueId)
+		if err != nil {
 			fmt.Println("GetQueueItem:", err)
 			return err
 		}
 		//fmt.Println("Executable.Number:", task.Raw.Executable.Number)
-		fmt.Println("Pending:", task.Raw.Pending,task.Raw.Why)
+		fmt.Println("Pending:", task.Raw.Pending, task.Raw.Why)
 		//tr, _ := json.Marshal(task.Raw)
 		//fmt.Println("task raw:", string(tr))
-		if task.Raw.Executable.Number != 0 {flag=true}
+		if task.Raw.Executable.Number != 0 {
+			flag = true
+		}
 		//fmt.Println("task raw:", i)
 
 	}
@@ -53,13 +56,15 @@ func (j *Jenkins)Build(jenkins *gojenkins.Jenkins, jobName string, options map[s
 	flag = false
 	for !flag {
 		time.Sleep(2 * time.Second)
-		build, err = jenkins.GetBuild(jobName, task.Raw.Executable.Number)
+		build, err = jenkins.GetBuild(context.TODO(), jobName, task.Raw.Executable.Number)
 		if err != nil {
 			fmt.Println("GetBuild:", err)
 			return err
 		}
 		fmt.Println("GetBuild: ", build.Info().EstimatedDuration)
-		if len(build.Raw.Result) != 0 && !build.Raw.Building {flag = true}
+		if len(build.Raw.Result) != 0 && !build.Raw.Building {
+			flag = true
+		}
 	}
 	br, _ := json.Marshal(build.Raw)
 	fmt.Println("build raw:", build.Raw.Result)
@@ -72,12 +77,11 @@ func (j *Jenkins)Build(jenkins *gojenkins.Jenkins, jobName string, options map[s
 	return nil
 }
 
-func (j *Jenkins)GetJenkins() error {
+func (j *Jenkins) GetJenkins() error {
 	var err error
-	j.Server, err = gojenkins.CreateJenkins(nil, j.Host, j.Username, j.Token).Init()
-	if err!=nil{
+	j.Server, err = gojenkins.CreateJenkins(nil, j.Host, j.Username, j.Token).Init(context.TODO())
+	if err != nil {
 		return err
 	}
 	return nil
 }
-

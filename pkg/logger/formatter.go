@@ -1,3 +1,7 @@
+/*
+Using https://github.com/t-tomalak/logrus-easy-formatter/ as formatter
+*/
+
 package logger
 
 import (

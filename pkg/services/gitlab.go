@@ -37,7 +37,9 @@ func (g *Gitlab) GitlabClient() error {
 	return nil
 }
 
-// GetProject
+/*
+@projectName: ops/java-demo
+*/
 func (g *Gitlab) GetProject(projectName string) error {
 	tempSlice:= strings.Split(projectName, "/")
 	if len(tempSlice) == 0{

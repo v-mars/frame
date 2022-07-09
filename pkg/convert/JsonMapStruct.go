@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 )
-
 
 func StructToMapOut(m interface{}, out *map[string]interface{}) error {
 	tmp, err := json.Marshal(m)
-	if err!=nil{
+	if err != nil {
 		return err
 	}
 	err = json.Unmarshal(tmp, &out)
-	if err!=nil{
+	if err != nil {
 		return err
 	}
 	return nil
@@ -22,12 +22,30 @@ func StructToMapOut(m interface{}, out *map[string]interface{}) error {
 func StructToMap(m interface{}) (map[string]interface{}, error) {
 	var out map[string]interface{}
 	tmp, err := json.Marshal(m)
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 	err = json.Unmarshal(tmp, &out)
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
+	}
+	var t = reflect.TypeOf(m)
+	var v = reflect.ValueOf(m)
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		tField := t.Field(i)
+		var fieldName = strings.ToLower(tField.Name)
+		var value = field.Interface()
+		var keepData = tField.Tag.Get("keep_data")
+		_, ok := out[fieldName]
+		if ok && keepData == "yes" {
+			//bytes, err := json.Marshal(value)
+			//if err != nil {
+			//	return nil,err
+			//}
+			//out[fieldName] = string(bytes)
+			out[fieldName] = value
+		}
 	}
 	return out, nil
 }
@@ -35,12 +53,12 @@ func StructToMap(m interface{}) (map[string]interface{}, error) {
 func StructToMapSlice(m interface{}) ([]map[string]interface{}, error) {
 	var out []map[string]interface{}
 	tmp, err := json.Marshal(m)
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 	err = json.Unmarshal(tmp, &out)
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 	return out, nil
 }
@@ -56,7 +74,7 @@ func StructToMapViaReflect(m interface{}) map[string]interface{} {
 }
 
 // StructToMapByReflect ToMap 结构体转为Map[string]interface{}
-func StructToMapByReflect(in interface{}, tagName string) (map[string]interface{}, error){
+func StructToMapByReflect(in interface{}, tagName string) (map[string]interface{}, error) {
 	out := make(map[string]interface{})
 
 	v := reflect.ValueOf(in)
@@ -64,7 +82,7 @@ func StructToMapByReflect(in interface{}, tagName string) (map[string]interface{
 		v = v.Elem()
 	}
 
-	if v.Kind() != reflect.Struct {  // 非结构体返回错误提示
+	if v.Kind() != reflect.Struct { // 非结构体返回错误提示
 		return nil, fmt.Errorf("ToMap only accepts struct or struct pointer; got %T", v)
 	}
 

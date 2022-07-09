@@ -1,6 +1,5 @@
 package response
 
-
 type DeleteSchema struct {
-	Rows []uint `json:"rows"`
+	Rows []int `json:"rows"`
 }

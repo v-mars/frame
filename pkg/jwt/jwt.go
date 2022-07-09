@@ -2,11 +2,11 @@ package jwt
 
 import (
 	"errors"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"time"
 )
 
-const defaultKey = "jS2SnJdSmTKRNQYh"
+const defaultKey = "jS2SnJdSmTKRAQYh"
 
 // tokenInfo 令牌信息
 type tokenInfo struct {
@@ -46,7 +46,7 @@ type Option func(*options)
 var defaultOptions = options{
 	TokenType:     "Bearer",
 	Expired:       3600,
-	SigningMethod: jwt.SigningMethodHS256, 	//signingMethod: jwt.SigningMethodHS512,
+	SigningMethod: jwt.SigningMethodHS256, //signingMethod: jwt.SigningMethodHS512,
 	SigningKey:    []byte(defaultKey),
 	KeyFunc: func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -57,17 +57,17 @@ var defaultOptions = options{
 }
 
 // SetSigningMethod 设定签名方式
-func (a *JWTAuth)SetSigningMethod(method jwt.SigningMethod) {
+func (a *JWTAuth) SetSigningMethod(method jwt.SigningMethod) {
 	a.Options.SigningMethod = method
 }
 
 // SetSigningKey 设定签名key
-func (a *JWTAuth)SetSigningKey(key []byte) {
+func (a *JWTAuth) SetSigningKey(key []byte) {
 	a.Options.SigningKey = key
 }
 
 // SetKeyFunc 设定签名keyFunc
-func (a *JWTAuth)SetKeyFunc(key []byte) {
+func (a *JWTAuth) SetKeyFunc(key []byte) {
 	a.Options.KeyFunc = func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, ErrInvalidToken
@@ -77,7 +77,7 @@ func (a *JWTAuth)SetKeyFunc(key []byte) {
 }
 
 // SetKey 设定签名key
-func (a *JWTAuth)SetKey(key []byte) {
+func (a *JWTAuth) SetKey(key []byte) {
 	a.SetSigningKey(key)
 	a.SetKeyFunc(key)
 }
@@ -88,7 +88,7 @@ func (a *JWTAuth) SetExpired(expired int) {
 }
 
 // SetKeyfunc 设定验证key的回调函数
-func (a *JWTAuth)SetKeyfunc(keyFunc jwt.Keyfunc){
+func (a *JWTAuth) SetKeyfunc(keyFunc jwt.Keyfunc) {
 	a.Options.KeyFunc = keyFunc
 }
 
@@ -105,7 +105,7 @@ func New(opts ...Option) JWTAuth {
 	}
 
 	return JWTAuth{
-		Options:  &o,
+		Options: &o,
 	}
 }
 
@@ -113,20 +113,24 @@ type NewFunc func(*JWTAuth)
 
 // JWTAuth jwt认证
 type JWTAuth struct {
-	Options  *options
+	Options *options
 }
 
 // GenerateToken 生成令牌
 func (a *JWTAuth) GenerateToken() (TokenInfo, error) {
 	now := time.Now()
-	expiresAt := now.Add(time.Duration(a.Options.Expired) * time.Second).Unix()
+	expiresAt := now.Add(time.Duration(a.Options.Expired) * time.Second)
 	token := jwt.New(a.Options.SigningMethod)
 	//claims := make(jwt.MapClaims)
 	//claims["name"] = "xxx"
-	if expiresAt>0{
-		a.Options.Claims["exp"] = expiresAt
+	if a.Options.Expired > 0 {
+		a.Options.Claims["exp"] = expiresAt.Unix()
+		var timeFmt = expiresAt.Format("2006-01-02 15:04:05")
+		a.Options.Claims["exp_date"] = timeFmt
+	} else {
+		delete(a.Options.Claims, "exp")
 	}
-	a.Options.Claims["iat"] = now.Unix()  // 签发人
+	a.Options.Claims["iat"] = now.Unix() // 签发人
 	a.Options.Claims["iss"] = "go jwt."
 	//claims["jti"] = "go jwt."  // id
 
@@ -138,14 +142,14 @@ func (a *JWTAuth) GenerateToken() (TokenInfo, error) {
 	}
 
 	info := tokenInfo{
-		ExpiresAt:   expiresAt,
+		ExpiresAt:   expiresAt.Unix(),
 		TokenType:   a.Options.TokenType,
 		AccessToken: tokenString,
 	}
 	return info, nil
 }
 
-// 解析令牌
+// ParseToken 解析令牌
 func (a *JWTAuth) ParseToken(tokenString string, keys string) (map[string]interface{}, error) {
 	key := defaultKey
 	if len(keys) > 0 {
@@ -178,14 +182,13 @@ func (a *JWTAuth) ParseToken(tokenString string, keys string) (map[string]interf
 	return token.Claims.(jwt.MapClaims), nil
 }
 
-
 // 定义错误
 var (
-	TokenExpired     error  = errors.New("token is expired")
-	TokenNotValidYet error  = errors.New("token not active yet")
-	TokenMalformed   error  = errors.New("that's not even a token")
-	TokenInvalid     error  = errors.New("invalid token")
-	ErrInvalidToken  error  = errors.New("invalid token")
+	TokenExpired     error = errors.New("token is expired")
+	TokenNotValidYet error = errors.New("token not active yet")
+	TokenMalformed   error = errors.New("that's not even a token")
+	TokenInvalid     error = errors.New("invalid token")
+	ErrInvalidToken  error = errors.New("invalid token")
 )
 
 // TokenInfo 令牌信息

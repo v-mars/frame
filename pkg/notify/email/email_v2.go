@@ -1,13 +1,12 @@
 package email
 
 import (
+	"github.com/v-mars/frame/pkg/logger"
 	"crypto/tls"
 	"fmt"
-	"github.com/v-mars/frame/pkg/logger"
 	"gopkg.in/gomail.v2"
 	"log"
 )
-
 
 // MailboxConf 邮箱配置
 type MailboxConf struct {
@@ -16,14 +15,14 @@ type MailboxConf struct {
 	// 邮件内容
 	Body string
 	// 邮件附件
-	Attach   []string
+	Attach []string
 	// 收件人列表
 	RecipientList []string
 	// 发件人账号
 	Sender string
 	// 发件人密码，QQ邮箱这里配置授权码
 	Password string
-	From  string
+	From     string
 	// SMTP 服务器地址， QQ邮箱是smtp.qq.com
 	SMTPAddr string
 	// SMTP端口 QQ邮箱是25
@@ -31,19 +30,21 @@ type MailboxConf struct {
 	Tls      bool
 }
 
-func NewMail(username, password, SMTPAddr,from string,SMTPPort int, tls bool) MailboxConf {
-	return MailboxConf{Sender: username,Password: password, SMTPAddr: SMTPAddr,SMTPPort: SMTPPort,From: from,Tls: tls}
+func NewMail(username, password, SMTPAddr, from string, SMTPPort int, tls bool) MailboxConf {
+	return MailboxConf{Sender: username, Password: password, SMTPAddr: SMTPAddr, SMTPPort: SMTPPort, From: from, Tls: tls}
 }
 
-func (mailConf MailboxConf) Send (title, body string, RecipientList,AttachList []string) error {
+func (mailConf MailboxConf) Send(title, body string, RecipientList, AttachList []string) error {
 	m := gomail.NewMessage()
 	m.SetHeader(`From`, mailConf.Sender)
 	m.SetHeader(`To`, RecipientList...)
 	m.SetHeader(`Subject`, title)
 	m.SetBody(`text/html`, body)
 	//m.Attach("./Dockerfile") //添加附件
-	if len(AttachList)>0{
-		for _,v:=range AttachList{m.Attach(v)}
+	if len(AttachList) > 0 {
+		for _, v := range AttachList {
+			m.Attach(v)
+		}
 	}
 
 	dialer := gomail.NewDialer(mailConf.SMTPAddr, mailConf.SMTPPort, mailConf.Sender, mailConf.Password)
