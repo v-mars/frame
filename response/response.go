@@ -1,6 +1,7 @@
 package response
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
@@ -12,6 +13,8 @@ import (
 	"regexp"
 	"strings"
 )
+
+var DefaultAesKey = "Ifmkbook1qaz*WSP"
 
 type Data struct {
 	Code    int         `json:"code"`
@@ -162,6 +165,20 @@ func FailedCodeRecovery(c *gin.Context, code int, msg error, RecoveryErr error) 
 		c.Set("stack", fmt.Errorf("%s", RecoveryErr))
 	}
 	ResJSON(c, http.StatusInternalServerError, &ret)
+}
+
+// EncryptSuccess 加密数据响应成功
+func EncryptSuccess(c *gin.Context, v interface{}) {
+	if v != nil {
+		marshal, err := json.Marshal(v)
+		if err != nil {
+			return
+		}
+		v = utils.EnTxtByAes(string(marshal), DefaultAesKey)
+	}
+	ret := Data{Code: SUCCESS_CODE, Status: "success", Message: "成功.", Data: v}
+	c.Header("EncryptData", "yes")
+	ResJSON(c, http.StatusOK, &ret)
 }
 
 func Success(c *gin.Context, v interface{}) {

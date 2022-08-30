@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"github.com/v-mars/frame/response"
 	"gorm.io/gorm"
-	"strings"
-
 	"regexp"
+	"strings"
 )
 
 func Save(value interface{}) error {
@@ -70,7 +69,9 @@ func DBInt(model interface{}, o Option, dbObj *gorm.DB) *gorm.DB {
 	if dbObj == nil {
 		panic(any("db client is nil!"))
 	}
-	if model != nil {
+	if len(o.Table) > 0 {
+		dbObj = dbObj.Table(o.Table)
+	} else if model != nil {
 		dbObj = dbObj.Model(model)
 	}
 	if len(o.Select) > 0 {

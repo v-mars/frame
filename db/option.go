@@ -23,4 +23,5 @@ type Option struct {
 	Omits     []string
 	NullError bool
 	Debug     bool
+	Table     string
 }
