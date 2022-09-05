@@ -1,11 +1,11 @@
 package wechat
 
 import (
-	"github.com/v-mars/frame/pkg/notify"
 	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/v-mars/frame/pkg/notify"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -13,8 +13,18 @@ import (
 )
 
 var (
-	defaultMsgType = "text"
+	defaultMsgType  = "text"
+	MsgTypeText     = "text"
+	MsgTypeTextCard = "textcard"
+	MsgTypeMarkdown = "markdown"
 )
+
+//"textcard": map[string]interface{}{
+//"title":       title,
+//"description": description,
+//"url":         url,
+//"btntext":     btntxt,
+//},
 
 // Err 微信返回错误
 type err struct {
@@ -31,11 +41,12 @@ type accessToken struct {
 }
 
 //Client 微信企业号应用配置信息
-type client struct {
+type Client struct {
 	CropID      string
 	AgentID     int
 	AgentSecret string
 	Token       accessToken
+	TextCard    map[string]interface{} `json:"textcard"`
 }
 
 //Result 发送消息返回结果
@@ -53,17 +64,20 @@ type Content struct {
 
 //Message 消息主体参数
 type Message struct {
-	ToUser  string  `json:"touser"`
-	ToParty string  `json:"toparty"`
-	ToTag   string  `json:"totag"`
-	MsgType string  `json:"msgtype"`
-	AgentID int     `json:"agentid"`
-	Text    Content `json:"text"`
+	ToUser   string                 `json:"touser"`
+	ToParty  string                 `json:"toparty"`
+	ToTag    string                 `json:"totag"`
+	MsgType  string                 `json:"msgtype"`
+	AgentID  int                    `json:"agentid"`
+	Text     Content                `json:"text"`
+	Markdown Content                `json:"markdown"`
+	TextCard map[string]interface{} `json:"textcard"`
 }
 
 //NewWeChat init wechat notidy
-func NewWeChat(cropID string, agentID int, agentSecret string) notify.Sender {
-	return &client{
+func NewWeChat(cropID string, agentID int, agentSecret string) *Client {
+	defaultMsgType = MsgTypeText
+	return &Client{
 		CropID:      cropID,
 		AgentID:     agentID,
 		AgentSecret: agentSecret,
@@ -71,17 +85,23 @@ func NewWeChat(cropID string, agentID int, agentSecret string) notify.Sender {
 }
 
 // Send format send msg to Message
-func (c *client) Send(tos []string, title, content string) error {
+func (c *Client) Send(tos, toParty, toTag []string, title, content string) error {
+
 	msg := Message{
 		ToUser:  strings.Join(tos, "|"),
+		ToParty: strings.Join(toParty, "|"),
+		ToTag:   strings.Join(toTag, "|"),
 		MsgType: defaultMsgType,
+		Markdown: Content{
+			Content: title + "\n" + content,
+		},
+		TextCard: c.TextCard,
 		Text: Content{
 			Content: title + "\n" + content,
 		},
 		AgentID: c.AgentID,
 	}
-	err := c.send(msg)
-	if err != nil {
+	if err := c.send(msg); err != nil {
 		return err
 
 	}
@@ -90,7 +110,7 @@ func (c *client) Send(tos []string, title, content string) error {
 }
 
 //Send 发送信息
-func (c *client) send(msg Message) error {
+func (c *Client) send(msg Message) error {
 	c.generateAccessToken()
 
 	url := "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + c.Token.AccessToken
@@ -119,8 +139,12 @@ func (c *client) send(msg Message) error {
 	return nil
 }
 
+func (c *Client) SetMsgType(msgType string) {
+	defaultMsgType = msgType
+}
+
 //generateAccessToken 生成会话token
-func (c *client) generateAccessToken() {
+func (c *Client) generateAccessToken() {
 	var err error
 	if c.Token.AccessToken == "" || c.Token.ExpiresInTime.Before(time.Now()) {
 		c.Token, err = getAccessTokenFromWeixin(c.CropID, c.AgentSecret)
