@@ -85,7 +85,7 @@ func NewWeChat(cropID string, agentID int, agentSecret string) *Client {
 }
 
 // Send format send msg to Message
-func (c *Client) Send(tos, toParty, toTag []string, title, content string) error {
+func (c *Client) Send(tos, toParty, toTag []string, title, content string,msgTextCard map[string]interface{}) error {
 
 	msg := Message{
 		ToUser:  strings.Join(tos, "|"),
@@ -95,7 +95,7 @@ func (c *Client) Send(tos, toParty, toTag []string, title, content string) error
 		Markdown: Content{
 			Content: title + "\n" + content,
 		},
-		TextCard: c.TextCard,
+		TextCard: msgTextCard,
 		Text: Content{
 			Content: title + "\n" + content,
 		},
