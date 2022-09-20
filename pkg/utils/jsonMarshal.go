@@ -7,12 +7,12 @@ import (
 
 // 定义JSON操作
 var (
-	json              = jsoniter.ConfigCompatibleWithStandardLibrary
-	JSONMarshal       = json.Marshal
-	JSONUnmarshal     = json.Unmarshal
-	JSONMarshalIndent = json.MarshalIndent
-	JSONNewDecoder    = json.NewDecoder
-	JSONNewEncoder    = json.NewEncoder
+	Json              = jsoniter.ConfigCompatibleWithStandardLibrary
+	JSONMarshal       = Json.Marshal
+	JSONUnmarshal     = Json.Unmarshal
+	JSONMarshalIndent = Json.MarshalIndent
+	JSONNewDecoder    = Json.NewDecoder
+	JSONNewEncoder    = Json.NewEncoder
 )
 
 // JSONMarshalToString JSON编码为字符串
@@ -30,7 +30,7 @@ func PrettyJson(data interface{}) (string, error) {
 		tab   = "\t"
 	)
 	buffer := new(bytes.Buffer)
-	encoder := json.NewEncoder(buffer)
+	encoder := Json.NewEncoder(buffer)
 	encoder.SetIndent(empty, tab)
 
 	err := encoder.Encode(data)

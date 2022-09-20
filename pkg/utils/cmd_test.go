@@ -88,7 +88,7 @@ func TestMkdir(t *testing.T) {
 	//	return
 	//}
 	//fmt.Println("getwd:", getwd)
-	getwd := "/Users/xxx/work/dev/go/air"
+	getwd := "/Users/xxx/work/"
 	dir := getwd + "/data/program/goapp/golang"
 	err := os.Mkdir(dir, 0755)
 	if err != nil {
@@ -98,7 +98,7 @@ func TestMkdir(t *testing.T) {
 }
 
 func TestMkdirAll(t *testing.T) {
-	getwd := "/Users/xxx/work/dev/go/air"
+	getwd := "/Users/xxxx/work/d"
 	dir := getwd //+ "/data/program/goapp/golang"
 	_, err := os.Stat(dir)
 	if err != nil {
@@ -117,7 +117,7 @@ func TestMkdirAll(t *testing.T) {
 }
 
 func TestDirRemove(t *testing.T) {
-	getwd := "/Users/xxx/work/dev/go/air"
+	getwd := "/Users/xxx"
 	dir := getwd + "/data/program/goapp/golang"
 	err := os.Remove(dir)
 	if err != nil {

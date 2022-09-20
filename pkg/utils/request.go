@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"encoding/json"
 	log "github.com/sirupsen/logrus"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -16,7 +18,8 @@ func UrlEncode(param map[string]string) string {
 	return params.Encode()
 }
 
-func Request(url, method string, param interface{}, headers []map[string]string, out interface{}) ([]byte, error) {
+func Request(url, method string, param interface{}, headers []map[string]string, client *http.Client,
+	out interface{}) ([]byte, error) {
 	var jsonBytes []byte
 	var err error
 	if param != nil {
@@ -28,7 +31,7 @@ func Request(url, method string, param interface{}, headers []map[string]string,
 		}
 	}
 
-	client := &http.Client{}
+	//client := &http.Client{}
 	request, err := http.NewRequest(method, url, strings.NewReader(string(jsonBytes)))
 	if err != nil {
 		log.Errorf("request new http request err, %s", err)
@@ -45,11 +48,17 @@ func Request(url, method string, param interface{}, headers []map[string]string,
 	//处理返回结果
 	log.Debugf("request url[%s] start", url)
 	resp, err := client.Do(request)
-	defer resp.Body.Close()
 	if err != nil {
 		log.Errorf("request do err, %s", err)
 		return nil, err
 	}
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Errorf("request Body.Close do err, %s", err)
+		}
+	}(resp.Body)
 
 	log.Debugf("read data bytes start")
 	content, err := ioutil.ReadAll(resp.Body)

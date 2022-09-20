@@ -11,7 +11,6 @@ import (
 	"strings"
 )
 
-
 func IsZip(src string) (bool, error) {
 	f, err := os.Stat(src)
 	if err != nil {
@@ -53,7 +52,7 @@ func GetSrcZips(src string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	fileNames := []string{}
+	fileNames := make([]string, 0)
 	for _, f := range files {
 		ext := filepath.Ext(f.Name())
 		if ext != ExtZip {
@@ -66,7 +65,9 @@ func GetSrcZips(src string) ([]string, error) {
 	return fileNames, nil
 }
 
-func Compress(srcDir, dstZipPath string) error {
+// ZipCompress
+// zip压缩
+func ZipCompress(srcDir, dstZipPath string) error {
 	if filepath.Ext(filepath.Base(dstZipPath)) != ExtZip {
 		return fmt.Errorf("not a zip file")
 	}
@@ -177,7 +178,9 @@ const (
 	fileMaxSize       int64  = 10737418240
 )
 
-func UnCompress(src, dst string) error {
+// UnZipCompress
+// zip解压
+func UnZipCompress(src, dst string) error {
 	isZip, err := IsZip(src)
 	if err != nil {
 		return err

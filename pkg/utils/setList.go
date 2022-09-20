@@ -1,7 +1,6 @@
 package utils
 
-
-//求并集
+// Union 求并集
 func Union(slice1, slice2 []string) []string {
 	m := make(map[string]int)
 	for _, v := range slice1 {
@@ -17,7 +16,7 @@ func Union(slice1, slice2 []string) []string {
 	return slice1
 }
 
-//求交集
+// Intersect 求交集
 func Intersect(slice1, slice2 []string) []string {
 	m := make(map[string]int)
 	nn := make([]string, 0)
@@ -34,7 +33,10 @@ func Intersect(slice1, slice2 []string) []string {
 	return nn
 }
 
-//求差集 slice1-并集
+// Difference 求差集 slice1-并集
+/**
+ * Difference(slice1, slice2)  slice1 多出来的元素
+ */
 func Difference(slice1, slice2 []string) []string {
 	m := make(map[string]int)
 	nn := make([]string, 0)

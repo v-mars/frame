@@ -13,7 +13,7 @@ func Base64Dec(encodeString string) string {
 	decodeBytes, err := base64.StdEncoding.DecodeString(encodeString)
 	//decodeBytes, err := base64.RawStdEncoding.DecodeString(encodeString)
 	if err != nil {
-		panic(err)
+		panic(any(err))
 	}
 	return string(decodeBytes)
 }
@@ -28,7 +28,7 @@ func Base64EncUrl(input []byte) string {
 func Base64DecUrl(encodeString string) string {
 	decodeBytes, err := base64.URLEncoding.DecodeString(encodeString)
 	if err != nil {
-		panic(err)
+		panic(any(err))
 	}
 	return string(decodeBytes)
 }
